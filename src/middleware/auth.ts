@@ -28,7 +28,7 @@ class AuthMiddleware {
             try {
                 const user_details = jwt.verify(apiKey, process.env.JWT_SECRET) as JwtPayload;
 
-                request.admin = await AdminModel.findById(user_details.userId).select("-password");
+                request.admin = await AdminModel.findById(user_details._id).select("-password");
 
                 if (request.admin) {
                     return next();

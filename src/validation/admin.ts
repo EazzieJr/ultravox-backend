@@ -11,3 +11,8 @@ export const LoginAdminSchema = Joi.object({
     ...RequiredEmail,
     ...RequiredPassword
 });
+
+export const CreateWorkerSchema = Joi.object({
+    username: Joi.string().required(),
+    ...RequiredPassword
+});

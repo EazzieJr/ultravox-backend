@@ -1,10 +1,12 @@
 import RootService from "./_root";
 import { Request, Response, NextFunction } from "express";
-import { NewAdminSchema, LoginAdminSchema } from "../validation/admin";
+import { NewAdminSchema, LoginAdminSchema, CreateWorkerSchema } from "../validation/admin";
 import { AdminModel } from "../model/admin";
+import { WorkerModel } from "../model/worker";
 import { generate_token, check_password_match } from "../utilities/general";
 import { Schema } from "mongoose";
 import argon2 from "argon2";
+import { AuthRequest } from "../middleware/authRequest";
 
 class AdminService extends RootService {
     async signup(req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -43,9 +45,9 @@ class AdminService extends RootService {
                 data: result
             });
 
-        } catch (error) {
-            console.error("Error signing up admin: " + error);
-            next(error);
+        } catch (e) {
+            console.error("Error signing up admin: " + e);
+            next(e);
         };
     };
 
@@ -83,11 +85,48 @@ class AdminService extends RootService {
                 data: result
             });
 
-        } catch (error) {
-            console.error("Error loggin in admin: " + error);
-            next(error);
+        } catch (e) {
+            console.error("Error loggin in admin: " + e);
+            next(e);
+        };
+    };
+
+    async create_worker(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+        try {
+            const body = req.body;
+            const adminId = req.admin._id;
+
+            const { error } = CreateWorkerSchema.validate(body, { abortEarly: false });
+            if (error) return this.handle_validation_errors(error, res, next);
+
+            const check_admin = await AdminModel.findById(adminId).select("-password");
+            if (!check_admin) return res.status(401).json({ error: "You are not an admin" });
+
+            const { username, password } = body;
+
+            const check_username = await WorkerModel.findOne({ username });
+            if (check_username) return res.status(400).json({ error: "Username is already taken, kindly use another" });
+
+            const hashed_password = await argon2.hash(password);
+
+            const new_worker = await WorkerModel.create({
+                username,
+                password: hashed_password
+            });
+
+            if (!new_worker._id) return res.status(400).json({ error: "Unable to create new worker" });
+
+            return res.status(201).json({
+                success: true,
+                message: "Created new worker successfully",
+                username
+            });
+
+        } catch (e) {
+            console.error("Error creating worker: " + e);
+            next(e);
         };
     };
 };
 
-export const admin_controller = new AdminService();
+export const admin_service = new AdminService();
