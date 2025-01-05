@@ -2,6 +2,9 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { Server as HTTPServer, createServer } from "http";
 import expressWs from "express-ws";
+import { connectDb } from "./config/database";
+
+connectDb();
 
 export class Server {
     private httpServer: HTTPServer;
