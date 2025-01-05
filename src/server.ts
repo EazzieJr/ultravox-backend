@@ -1,8 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { Server as HTTPServer, createServer } from "http";
 import expressWs from "express-ws";
 import { connectDb } from "./config/database";
+import HTTP from "./middleware/handler";
 
 connectDb();
 
@@ -25,6 +26,12 @@ export class Server {
         this.app.get("/", (req: Request, res: Response) => {
             res.send("Hello World");
         });
+
+        this.app.use(HTTP.setupRequest);
+        this.app.use(HTTP.processResponse);
+        this.app.use(HTTP.handle404);
+        this.app.use(HTTP.handleError);
+    
     };
 
     listen(port: number): void {

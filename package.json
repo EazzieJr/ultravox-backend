@@ -5,15 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
+    "build": "npm install & tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/express-ws": "^3.0.5",
     "argon2": "^0.41.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
@@ -22,9 +20,15 @@
     "express-ws": "^5.0.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
     "twilio": "^5.4.0",
     "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-ws": "^3.0.5",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
