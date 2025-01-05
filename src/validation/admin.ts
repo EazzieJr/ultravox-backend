@@ -6,3 +6,8 @@ export const NewAdminSchema = Joi.object({
     ...RequiredPassword,
     username: Joi.string().required()
 });
+
+export const LoginAdminSchema = Joi.object({
+    ...RequiredEmail,
+    ...RequiredPassword
+});

@@ -29,8 +29,4 @@ const adminSchema = new Schema<AdminDocument>({
     }
 }, { timestamps: true });
 
-adminSchema.pre("save", async function () {
-    this.password = await argon2.hash(this.password);
-});
-
 export const AdminModel = model("Admin", adminSchema);

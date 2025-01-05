@@ -7,4 +7,8 @@ router
         admin_controller.signup(req, res, next);
     })
 
+    .post("/login", (req: Request, res: Response, next: NextFunction) => {
+        admin_controller.login(req, res, next);
+    })
+
 export default router;

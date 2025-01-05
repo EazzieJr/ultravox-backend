@@ -11,6 +11,6 @@ export const generate_token = (_id: Schema.Types.ObjectId, email: string): strin
     return token;
 };
 
-export const check_password_match = async (plain_password: string, encrypted_password: string): Promise<boolean> => {
+export const check_password_match = async (encrypted_password: string, plain_password: string): Promise<boolean> => {
     return await argon2.verify(encrypted_password, plain_password);
 };
