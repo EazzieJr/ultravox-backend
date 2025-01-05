@@ -1,5 +1,4 @@
 import { Document, model, Schema } from "mongoose";
-import argon2 from "argon2";
 
 interface AdminDocument extends Document {
     email: string,
