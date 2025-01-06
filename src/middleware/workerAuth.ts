@@ -28,11 +28,9 @@ class AuthMiddleware {
             try {
                 const user_details = jwt.verify(apiKey, process.env.JWT_SECRET) as JwtPayload;
 
-                console.log("user: ", user_details);
-
                 request.worker = await WorkerModel.findById(user_details._id).select("-password");
 
-                if (request.worker) {
+                if (request.worker) {                    
                     return next();
                 };
 

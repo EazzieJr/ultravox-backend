@@ -1,9 +1,12 @@
 import RootService from "./_root";
 import { Request, Response, NextFunction } from "express";
 import { WorkerModel } from "../model/worker";
-import { LoginWorkerSchema } from "../validation/worker";
+import { LoginWorkerSchema, CreateAgentSchema } from "../validation/worker";
 import { generate_token, check_password_match } from "../utilities/general";
 import { Schema } from "mongoose";
+import { AuthRequest } from "../middleware/authRequest";
+import { v4 as uuidv4 } from "uuid";
+import { AgentModel } from "../model/agent";
 
 class WorkerService extends RootService {
     async login(req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -40,6 +43,47 @@ class WorkerService extends RootService {
 
         } catch (e) {
             console.error("Error loggin in worker: " + e);
+            next(e);
+        };
+    };
+
+    async create_agent(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+        try {
+            const body = req.body;
+            const workerId = req.worker._id;
+
+            const { error } = CreateAgentSchema.validate(body, { abortEarly: false });
+            if (error) return this.handle_validation_errors(error, res, next);
+
+            const check_worker = await WorkerModel.findOne({
+                _id: workerId,
+                isActive: true
+            });
+            if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+            const { name } = body;
+            
+            const check_agent = await AgentModel.findOne({ name });
+            if (check_agent) return res.status(400).json({ error: "Agent with that name already exists, please choose another"});
+
+            const key = uuidv4();
+            const agentId = `agent_${key}`;
+
+            const new_agent = await AgentModel.create({
+                agentId,
+                name
+            });
+
+            if (!new_agent._id) return res.status(500).json("Error creating new agent");
+
+            return res.status(201).json({
+                success: true,
+                message: "Created New Agent successfully",
+                new_agent
+            });
+            
+        } catch (e) {
+            console.error("Error creating agent: " + e);
             next(e);
         };
     };
