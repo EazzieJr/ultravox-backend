@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AdminModel } from '../model/admin';
+import { WorkerModel } from '../model/worker';
 import { NextFunction } from "express";
 import { AuthRequest } from './authRequest';
 
@@ -28,15 +28,17 @@ class AuthMiddleware {
             try {
                 const user_details = jwt.verify(apiKey, process.env.JWT_SECRET) as JwtPayload;
 
-                request.admin = await AdminModel.findById(user_details._id).select("-password");
+                console.log("user: ", user_details);
 
-                if (request.admin) {
+                request.worker = await WorkerModel.findById(user_details._id).select("-password");
+
+                if (request.worker) {
                     return next();
                 };
 
                 return next({
                     status_code: 403,
-                    error: "Unauthorized: Invalid auth token for admin"
+                    error: "Unauthorized: Invalid auth token for worker"
                 });
             } catch (e) {
                 console.error({ e });
