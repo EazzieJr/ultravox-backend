@@ -65,7 +65,6 @@ class AdminService extends RootService {
             if(!check_admin) return res.status(400).json({ error: "Admin not found" });
 
             const encrypted_password = check_admin.password;
-            console.log("pass: ", encrypted_password);
             const adminId: Schema.Types.ObjectId = check_admin._id as Schema.Types.ObjectId;
 
             const verify_password: boolean = await check_password_match(encrypted_password, password);
@@ -75,7 +74,7 @@ class AdminService extends RootService {
             const token = generate_token(adminId, email);
 
             const result = {
-                check_admin,
+                admin: check_admin,
                 token
             };
 
