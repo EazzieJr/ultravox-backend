@@ -15,4 +15,8 @@ router
         worker_service.create_agent(req, res, next);
     })
 
+    .get("/all-agents", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+        worker_service.fetch_agents(req, res, next);
+    })
+
 export default router;

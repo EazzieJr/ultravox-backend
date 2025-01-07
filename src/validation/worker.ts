@@ -9,3 +9,7 @@ export const LoginWorkerSchema = Joi.object({
 export const CreateAgentSchema = Joi.object({
     name: Joi.string().required()
 });
+
+// export const CreateAgentSchema = Joi.object({
+//     name: Joi.string().required()
+// }); 
