@@ -12,10 +12,11 @@ connectDb();
 
 export class Server {
     private httpServer: HTTPServer;
-    public app: expressWs.Application;
+    public app: express.Application;
 
     constructor() {
-        this.app = expressWs(express()).app;
+        // this.app = expressWs(express()).app;
+        this.app = express();
 
         this.httpServer = createServer(this.app);
         this.app.use(express.json());
