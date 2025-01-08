@@ -1,7 +1,7 @@
 import RootService from "./_root";
 import { Request, Response, NextFunction } from "express";
 import { WorkerModel } from "../model/worker";
-import { LoginWorkerSchema, CreateAgentSchema } from "../validation/worker";
+import { LoginWorkerSchema, CreateAgentSchema, UpdateAgentSchema } from "../validation/worker";
 import { generate_token, check_password_match } from "../utilities/general";
 import { Schema } from "mongoose";
 import { AuthRequest } from "../middleware/authRequest";
@@ -112,39 +112,6 @@ class WorkerService extends RootService {
         };
     };
 
-    // async update_agent(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
-    //     try {
-    //         const workerId = req.worker._id;
-
-    //         const check_worker = await WorkerModel.findOne({
-    //             _id: workerId,
-    //             isActive: true
-    //         });
-    //         if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
-
-
-    //         return res;
-    //     } catch (e) {
-    //         console.error("Error updating agent: ", e);
-    //         next(e);
-    //     };
-    // };
-
-    // async start_call(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
-    //     try {
-    //         const agentId = req.params;
-
-    //         const check_agent = await AgentModel.findOne({ agent: agentId });
-    //         if (!agentId) return res.status(401).json({ error: "AgentId not found" });
-
-    //         console.log("cheeck: ", check_agent);
-    //         return res;
-    //     } catch (e) {
-    //         console.error("Error starting a call: " + e);
-    //         next(e);
-    //     };
-    // };
-
     async list_voices(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
         try {
             const workerId = req.worker._id;
@@ -177,6 +144,156 @@ class WorkerService extends RootService {
             next(e);
         };
     };
+
+    // async list_numbers(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+    //     try {
+    //         const workerId = req.worker._id;
+
+    //         const check_worker = await WorkerModel.findOne({
+    //             _id: workerId,
+    //             isActive: true
+    //         });
+    //         if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+    //         const acctID = Environment.TWILIO_ACCOUNT_ID;
+    //         const auth = Environment.TWILIO_AUTH_TOKEN;
+
+    //         const options = {
+    //             method: "GET",
+    //             url: 'https://lookups.twilio.com/v2/PhoneNumbers',
+    //             auth: {
+    //                 username: acctID,
+    //                 password: auth
+    //             }
+    //         };
+
+    //         console.log("fine here");
+    //         const result = await axios(options);
+
+    //         const data = result.data;
+    //         console.log("dat:", data);
+
+    //         return res.status(200).json({
+    //             success: true,
+    //             data
+    //         });
+
+    //     } catch(e) {
+    //         console.error("Error fetching list of numbers: " + e);
+    //         next(e);
+    //     };
+    // };
+
+
+
+    async update_agent(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+        try {
+            const workerId = req.worker._id;
+            const body = req.body;
+
+            const { error } = UpdateAgentSchema.validate(body, { abortEarly: false });
+            if (error) return this.handle_validation_errors(error, res, next);
+
+            const check_worker = await WorkerModel.findOne({
+                _id: workerId,
+                isActive: true
+            });
+            if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+            const { agentId, systemPrompt, temperature, firstSpeaker, voice } = body
+
+            const check_agent = await AgentModel.findOne({ agentId });
+            if (!check_agent) return res.status(401).json({ error: "AgentId not found" });
+
+            const result = await AgentModel.findOneAndUpdate(
+                { agentId },
+                { $set: body },
+                { returnOriginal: false }
+            );
+
+            return res.status(200).json({
+                success: true,
+                message: "Updated agent successfully",
+                data: result
+            });
+
+        } catch (e) {
+            console.error("Error updating agent: ", e);
+            next(e);
+        };
+    };
+
+    // async function createUltravoxCall() {
+    //     const request = https.request(ULTRAVOX_API_URL, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-API-Key': ULTRAVOX_API_KEY
+    //         }
+    //     });
+    
+    //     return new Promise((resolve, reject) => {
+    //         let data = '';
+    
+    //         request.on('response', (response) => {
+    //             response.on('data', chunk => data += chunk);
+    //             response.on('end', () => resolve(JSON.parse(data)));
+    //         });
+    
+    //         request.on('error', reject);
+    //         request.write(JSON.stringify(ULTRAVOX_CALL_CONFIG));
+    //         request.end();
+    //     });
+    // }
+    
+
+    // async start_call(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+    //     try {
+    //         const agentId = req.params.agentId;
+
+            // const check_agent = await AgentModel.findOne({ agentId });
+            // if (!check_agent) return res.status(401).json({ error: "AgentId not found" });
+
+    //         const { systemPrompt, model_name, voice, temperature, firstSpeaker } = check_agent;
+
+    //         const ULTRAVOX_CONFIG = {
+    //             systemPrompt,
+    //             model: model_name,
+    //             voice,
+    //             temperature,
+    //             firstSpeaker,
+    //             medium: { "twilio": {} }
+    //         };
+
+    //         const options = {
+    //             method: "POST",
+    //             url: 'https://api.ultravox.ai/api/calls',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-API-Key': Environment.ULTRAVOX_KEY
+    //             },
+    //             data: ULTRAVOX_CONFIG
+    //         };
+
+    //         const ultra_response = await axios(options);
+
+    //         console.log("ultra_con: ", ULTRAVOX_CONFIG);
+
+    //         // const ULTRAVOX_CONFIG = {
+    //         //     systemPrompt: "",
+    //         //     model: 'fixie-ai/ultravox',
+    //         //     voice: 'Mark',
+    //         //     temperature: 0.3,
+    //         //     firstSpeaker: 'FIRST_SPEAKER_USER',
+    //         //     medium: { "twilio": {} }
+    //         // }
+    //         return res;
+    //     } catch (e) {
+    //         console.error("Error starting a call: " + e);
+    //         next(e);
+    //     };
+    // };
+
 };
 
 export const worker_service = new WorkerService();

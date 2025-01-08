@@ -10,6 +10,14 @@ export const CreateAgentSchema = Joi.object({
     name: Joi.string().required()
 });
 
+export const UpdateAgentSchema = Joi.object({
+    agentId: Joi.string().required(),
+    systemPrompt: Joi.string(),
+    temperature: Joi.number(),
+    firstSpeaker: Joi.string(),
+    voice: Joi.string()
+});
+
 // export const CreateAgentSchema = Joi.object({
 //     name: Joi.string().required()
 // }); 

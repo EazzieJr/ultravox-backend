@@ -23,6 +23,14 @@ router
         worker_service.list_voices(req, res, next);
     })
 
+    .put("/update-agent", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+        worker_service.update_agent(req, res, next);
+    })
+
+    // .get("/list-numbers", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+    //     worker_service.list_numbers(req, res, next);
+    // })
+
     // .post("/start-call/:agentId", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
     //     worker_service.start_call(req, res, next);
     // })
