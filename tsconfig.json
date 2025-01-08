@@ -3,6 +3,7 @@
       "strict": true,
       "strictPropertyInitialization": false,
       "strictNullChecks": false,
+      "skipLibCheck": true,
       "rootDir": "./src",
       "outDir": "./dist",
       "target": "ES2017",
