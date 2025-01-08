@@ -19,4 +19,12 @@ router
         worker_service.fetch_agents(req, res, next);
     })
 
+    .get("/list-voices", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+        worker_service.list_voices(req, res, next);
+    })
+
+    // .post("/start-call/:agentId", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+    //     worker_service.start_call(req, res, next);
+    // })
+
 export default router;

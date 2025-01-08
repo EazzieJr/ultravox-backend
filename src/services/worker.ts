@@ -7,6 +7,8 @@ import { Schema } from "mongoose";
 import { AuthRequest } from "../middleware/authRequest";
 import { v4 as uuidv4 } from "uuid";
 import { AgentModel } from "../model/agent";
+import axios, { Axios } from "axios";
+import { Environment } from "../config/env";
 
 class WorkerService extends RootService {
     async login(req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -110,14 +112,71 @@ class WorkerService extends RootService {
         };
     };
 
+    // async update_agent(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+    //     try {
+    //         const workerId = req.worker._id;
+
+    //         const check_worker = await WorkerModel.findOne({
+    //             _id: workerId,
+    //             isActive: true
+    //         });
+    //         if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+
+    //         return res;
+    //     } catch (e) {
+    //         console.error("Error updating agent: ", e);
+    //         next(e);
+    //     };
+    // };
+
     // async start_call(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
     //     try {
+    //         const agentId = req.params;
+
+    //         const check_agent = await AgentModel.findOne({ agent: agentId });
+    //         if (!agentId) return res.status(401).json({ error: "AgentId not found" });
+
+    //         console.log("cheeck: ", check_agent);
     //         return res;
     //     } catch (e) {
     //         console.error("Error starting a call: " + e);
     //         next(e);
     //     };
     // };
+
+    async list_voices(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+        try {
+            const workerId = req.worker._id;
+
+            const check_worker = await WorkerModel.findOne({
+                _id: workerId,
+                isActive: true
+            });
+            if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+            const options = {
+                method: "GET",
+                url: 'https://api.ultravox.ai/api/voices',
+                headers: {
+                    'X-API-Key': Environment.ULTRAVOX_KEY
+                }
+            };
+
+            const result = await axios(options);
+
+            const data = result.data;
+
+            return res.status(200).json({
+                success: true,
+                data
+            });
+
+        } catch(e) {
+            console.error("Error fetching list of voices: " + e);
+            next(e);
+        };
+    };
 };
 
 export const worker_service = new WorkerService();
