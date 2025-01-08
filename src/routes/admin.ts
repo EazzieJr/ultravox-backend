@@ -8,6 +8,7 @@ const authenticate = auth.authenticate;
 
 router
     .post("/signup", (req: Request, res: Response, next: NextFunction) => {
+        console.log("admin");
         admin_service.signup(req, res, next);
     })
 

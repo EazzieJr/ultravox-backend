@@ -25,6 +25,7 @@ export class Server {
         this.app.use(express.urlencoded({ extended: true }));
 
         this.app.get("/", (req: Request, res: Response) => {
+            console.log("getting here");
             res.send("Hello World");
         });
 
