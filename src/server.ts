@@ -5,6 +5,7 @@ import expressWs from "express-ws";
 import { connectDb } from "./config/database";
 import HTTP from "./middleware/handler";
 import routeHandlers from "./routes";
+import admin_route from "./routes/admin";
 
 connectDb();
 
@@ -28,6 +29,7 @@ export class Server {
             console.log("getting here");
             res.send("Hello World");
         });
+        this.app.use("/admin", admin_route);
 
         this.app.use("/api", routeHandlers);
         this.app.use(HTTP.setupRequest);
