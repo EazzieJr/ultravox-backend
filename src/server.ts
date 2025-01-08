@@ -6,6 +6,7 @@ import { connectDb } from "./config/database";
 import HTTP from "./middleware/handler";
 import routeHandlers from "./routes";
 import admin_route from "./routes/admin";
+import { admin_service } from "./services/admin";
 
 connectDb();
 
@@ -29,7 +30,10 @@ export class Server {
             console.log("getting here");
             res.send("Hello World");
         });
-        this.app.use("/admin", admin_route);
+        this.app.post("/admin/signup", (req: Request, res: Response, next: NextFunction) => {
+            console.log("admin");
+            admin_service.signup(req, res, next);
+        });
 
         this.app.use("/api", routeHandlers);
         this.app.use(HTTP.setupRequest);
