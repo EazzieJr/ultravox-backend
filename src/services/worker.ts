@@ -147,6 +147,32 @@ class WorkerService extends RootService {
         };
     };
 
+    async single_agent(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+        try {
+            const workerId = req.worker._id;
+            const agentId = req.params.agentId;
+
+            const check_worker = await WorkerModel.findOne({
+                _id: workerId,
+                isActive: true
+            });
+            if (!check_worker) return res.status(401).json({ error: "WorkerId not found or is not active" });
+
+            const check_agent = await AgentModel.findOne({ agentId });
+            if (!check_agent) return res.status(401).json({ error: "AgentId not found" });
+
+            return res.status(200).json({
+                success: true,
+                data: check_agent
+            });
+
+        } catch(e) {
+            console.error("Error fetching single agent: " + e);
+            next(e);
+        };
+    };
+ 
+
     // async list_numbers(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
     //     try {
     //         const workerId = req.worker._id;

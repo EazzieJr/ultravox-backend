@@ -27,6 +27,10 @@ router
         worker_service.update_agent(req, res, next);
     })
 
+    .get("/single-agent/:agentId", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+        worker_service.single_agent(req, res, next);
+    })
+
     // .get("/list-numbers", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
     //     worker_service.list_numbers(req, res, next);
     // })
