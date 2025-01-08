@@ -11,7 +11,7 @@ router
         worker_service.login(req, res, next);
     })
 
-    .post("/new-agent", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
+    .get("/new-agent", authenticate, (req: AuthRequest, res: Response, next: NextFunction) => {
         worker_service.create_agent(req, res, next);
     })
 
