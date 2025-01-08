@@ -104,12 +104,21 @@ class WorkerService extends RootService {
                 success: true,
                 all_agents
             });
-            
+
         } catch (e) {
             console.error("Error fetching list of agents: " + e);
             next(e);
         };
     };
+
+    // async start_call(req: AuthRequest, res: Response, next: NextFunction): Promise<Response> {
+    //     try {
+    //         return res;
+    //     } catch (e) {
+    //         console.error("Error starting a call: " + e);
+    //         next(e);
+    //     };
+    // };
 };
 
 export const worker_service = new WorkerService();
