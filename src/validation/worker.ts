@@ -7,7 +7,7 @@ export const LoginWorkerSchema = Joi.object({
 });
 
 export const CreateAgentSchema = Joi.object({
-    name: Joi.string().required()
+    documentType: Joi.string().required()
 });
 
 export const UpdateAgentSchema = Joi.object({
