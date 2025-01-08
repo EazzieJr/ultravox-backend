@@ -29,8 +29,8 @@ export class Server {
             res.send("Hello World");
         });
 
-        this.app.use(HTTP.setupRequest);
         this.app.use("/api", routeHandlers);
+        this.app.use(HTTP.setupRequest);
         this.app.use(HTTP.processResponse);
         this.app.use(HTTP.handle404);
         this.app.use(HTTP.handleError);
