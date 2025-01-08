@@ -38,7 +38,7 @@ export class Server {
     };
 
     listen(port: number): void {
-        this.app.listen(port);
+        this.httpServer.listen(port);
         console.log("Listening on " + port);
     };
 };
